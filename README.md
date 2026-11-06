@@ -48,10 +48,12 @@ id 转发给 magpie 的窗口，回程换回原 id；主题与可见性事件广
 ## 安装
 
 - magpie 插件页 → 添加插件 → 填 `@fish-under-sea/magpie-checkin-relay-probe`；
-- 或随 FISH Dock 的 Magpie 插件内置：目录放在 Dock 的
-  `plugins/magpie/bundled-plugins/magpie-checkin-relay-probe`，Dock 启动 Magpie
-  时同步到 magpie 数据目录下的 `plugins/magpie-checkin-relay-probe`，并以绝对
-  路径写进 `plugins.json`，首启即装、离线可用。
+- 或随 FISH Dock 的 Magpie 内置：Dock 只把 `@fish-under-sea/magpie-checkin-relay-probe@latest`
+  写进 magpie 的 `plugins.json`，不随包分发目录；首装与后续更新都由 magpie 自己的
+  插件更新循环按 npm spec 完成（与 `@magpie-community` 那批预装供应商插件同一条路），
+  所以本包发新版之后用户会自己更新，不用等 Dock 发版。
+
+> 2.2.9 曾经是「同步目录副本 + 绝对路径」，那条 spec 不在 magpie 的更新循环里，已改掉。
 
 ## 测试
 
