@@ -11,6 +11,7 @@ workbuddy.svg        minimax-code.svg     trae-cn.png
 codearts.svg         raccoon.png          autoclaw.svg
 autoclaw-cn.svg      qoder.png            qoder-cn.png
 loomy.png            loomy-plugin.png     zcode.png
+dumate.png
 ```
 
 `loomy.png` 与 `loomy-plugin.png` 是同一张图的两份文件名：签到页的 provider id 在不同版本里见过 `loomy` 与 `loomy-plugin` 两种写法，命名对不上就退回首字母色块，所以两个都放。
@@ -25,11 +26,12 @@ loomy.png            loomy-plugin.png     zcode.png
 
 ## 版权
 
-这里的文件都是各厂商的商标，只用于在用户自己机器上标识"这是哪一家"。素材分别取自：magpie 自带的厂商图标库（workbuddy / minimax / qoder / zcode 等）、各社区插件包自带的 `icon`（codearts / raccoon）、以及厂商官网公开的品牌资源（trae.ai、qoder.com、z.ai、iflyrec.com）。拿不到官方矢量图时宁可留空用色块，不要自绘近似标识。
+这里的文件都是各厂商的商标，只用于在用户自己机器上标识"这是哪一家"。素材分别取自：magpie 自带的厂商图标库（workbuddy / minimax / qoder / zcode 等）、各社区插件包自带的 `icon`（codearts / raccoon / dumate）、以及厂商官网公开的品牌资源（trae.ai、qoder.com、z.ai、iflyrec.com）。拿不到官方矢量图时宁可留空用色块，不要自绘近似标识。
 
 逐项来源：
 
 | 文件 | 来源 | 处理 |
 | --- | --- | --- |
+| `dumate.png` | 百度搭子 DuMate 插件（`github:R227BOUT/magpie-dumate`）包内的 `magpie.icon`，与同仓 `icon.png` 逐字节相同 | 原样照搬（256×256 透明底 PNG，MIT）：不裁切、不重绘，保证与插件页/供应商页里它自己的图标是同一张 |
 | `loomy.png`、`loomy-plugin.png` | <https://www.iflyrec.com/> 首页「科大讯飞 iFLYTEK」标志 | 取左侧 X 形符号那一块（原图 x 45–97、y 23–67），白底转透明，重采样到 64×64。文字不进来——22px 的格子里放横排字只剩一条糊线 |
 | `zcode.png` | magpie 自带的厂商图标库（`internal/gui/assets/icons/zcode.png`） | 原样照搬。ZCode 保留原图标，和 AutoClaw 的蓝圆一眼分得开 |

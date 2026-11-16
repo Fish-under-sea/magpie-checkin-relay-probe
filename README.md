@@ -10,6 +10,8 @@ magpie 的一个页面插件，**页内两页切换**：左边「签到」，右
 | 页 | 做什么 | 读 / 调用 |
 | --- | --- | --- |
 | **签到** | 每家厂商的账号、今日积分与连签、按厂商或账号的开关、手动签到，以及「预装插件美化」那一条 | 读 `checkin:state`；调用 `checkin:set-provider` / `checkin:set-account` / `checkin:run` / `checkin:refresh` / `brand:status` / `brand:set` |
+
+「今日积分」按厂商实际发放口径显示：商汤小浣熊每个账号签到得 **400 分**（站内展示值常见 150 上下，页面按 400 算，见 `page/checkin/view.js` 的 `DAILY_FIXED`），其余厂商仍用 `checkin:state` 报告的数，读不到就显示「未告知」。
 | **中转站探针** | 填中转站的 Base URL 与 Key，由 magpie 本体发出三组行为指纹探针（签名重放、计数对账、跨代 tokenizer），给出三档结论 | 调用 `relay:view` / `relay:save` / `relay:start` / `relay:status` / `relay:stop` / `magpie:open-external` |
 
 页面本身连不到网络（宿主给页面帧的 CSP 是 `connect-src 'none'`），一切动作都经

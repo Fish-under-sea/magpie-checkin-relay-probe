@@ -49,6 +49,18 @@
   };
   const OUTCOMES = ["claimed", "done", "ineligible", "inactive", "captcha"];
 
+  // 每日积分口径：宿主读到的站内数字和厂商实际发放对不上时，签到页按这里覆盖。
+  // 商汤小浣熊每个账号签到得 400 分；站内展示值常见 150 上下，用户看到的「今日」
+  // 应当是实际到账的 400，而不是站内那个数。只覆盖「今天确实签到成功」的账号，
+  // 未签到 / 签到失败 / 没报名额的仍沿用宿主数据与「未告知」语义。
+  const DAILY_FIXED = {raccoon: 400};
+  function fixedCredit(vendorId, outcome) {
+    if (outcome !== "claimed" && outcome !== "done") return null;
+    const id = String(vendorId);
+    if (!Object.prototype.hasOwnProperty.call(DAILY_FIXED, id)) return null;
+    return DAILY_FIXED[id];
+  }
+
   function text(lang) {
     return String(lang || "").toLowerCase().startsWith("zh") ? TEXT.zh : TEXT.en;
   }
@@ -104,6 +116,8 @@
     let line = t[outcome] || t.pending;
     if (entry.outcome === "ineligible" && entry.msg) line = `${line} · ${entry.msg}`;
     if (entry.streak) line = `${line}, ${t.streak.replace("{n}", entry.streak)}`;
+    const fixed = fixedCredit(vendor.id, outcome);
+    if (fixed !== null) return {key: outcome, text: line, bad: outcome === "ineligible" || outcome === "captcha", credit: fixed, estimate: null};
     return {key: outcome, text: line, bad: outcome === "ineligible" || outcome === "captcha", credit, estimate};
   }
 
@@ -113,11 +127,11 @@
     const vendors = (state && state.providers) || [];
     const groups = vendors.map((vendor) => {
       const accounts = accountsOf(state, vendor).map((account) => {
-        const {entry, credit, estimate} = todayOf(state, account.key);
+        const day = todayOf(state, account.key);
         const line = status(account, vendor, state, lang);
-        // No fallback to a fixed daily amount: the credit is only what the host
-        // reports, and a missing number stays null so the page can say 未告知.
-        return {...account, entry, credit, estimate, status: line};
+        // credit / estimate 都从 status 取：展开后的账号行与卡片汇总必须是同一份
+        // 数字，否则固定口径（raccoon 每号 400）只在汇总生效、展开还显示宿主的旧值。
+        return {...account, entry: day.entry, credit: line.credit, estimate: line.estimate, status: line};
       });
       const done = accounts.filter((a) => a.status.key === "claimed" || a.status.key === "done").length;
       const credit = accounts.reduce((sum, a) => sum + (a.credit ?? 0), 0);
