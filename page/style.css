@@ -72,29 +72,49 @@ body {
 }
 
 /* ── 液态玻璃（Magpie 2.4.0+ 的插件页钩子）───────────────────────────────
-   壳是唯一「贴着宿主窗口」的一层：内容区底色与标签栏都按 content 区域的不透明度
-   铺，子帧自己不再铺底（见 checkin/relay 的 style.css）。变量缺失或玻璃关着时
-   body 仍是实底，与旧版一致。 */
+   壳是唯一「贴着宿主窗口」的一层：页面底按 content 区域铺，子帧自己不再铺底。
+   标签栏不要整条底色——两个页签各做一枚玻璃胶囊，平分整条宽度（flex:1），
+   选中那枚用半透强调色。 */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) and (background: color-mix(in srgb, red, transparent)) {
-  /* html 让位给宿主壁纸，body 才是 content 区域的玻璃底。 */
   html[data-magpie-glass] { background: transparent; }
   html[data-magpie-glass] body {
     background: color-mix(in srgb, var(--magpie-bg, Canvas) var(--magpie-glass-content-fill, 100%), transparent);
   }
-  .shell-tabs {
-    background: color-mix(in srgb, var(--magpie-bg, Canvas) var(--magpie-glass-content-fill, 100%), transparent);
-    -webkit-backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
-    backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
+
+  html[data-magpie-glass] .shell-tabs {
+    background: transparent;
+    border-bottom: 0;
+    gap: 8px;
+    padding: 10px 16px 0;
   }
-  .shell-tab:hover {
+  html[data-magpie-glass] .shell-tab {
+    flex: 1 1 0;
+    padding: 7px 12px;
+    border: 1px solid color-mix(in srgb, var(--magpie-fg, CanvasText) 14%, transparent);
+    border-radius: 999px;
     background: color-mix(in srgb, var(--magpie-card, ButtonFace) var(--magpie-glass-control-fill, 100%), transparent);
+    -webkit-backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.06);
+    backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.06);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--magpie-fg, CanvasText) 20%, transparent);
+    text-align: center;
+  }
+  html[data-magpie-glass] .shell-tab:hover {
+    color: var(--magpie-fg, CanvasText);
+    border-color: color-mix(in srgb, var(--magpie-fg, CanvasText) 26%, transparent);
+  }
+  html[data-magpie-glass] .shell-tab[aria-selected="true"] {
+    border-color: color-mix(in srgb, var(--magpie-accent, Highlight) 42%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--magpie-accent, Highlight) 42%, transparent);
+    background: color-mix(in srgb, var(--magpie-accent, Highlight) 24%, transparent);
+    color: var(--magpie-accent, Highlight);
   }
 }
 
 /* 减少透明 / 高对比度：退回实底并关掉模糊。 */
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
   html[data-magpie-glass],
-  html[data-magpie-glass] body,
-  .shell-tabs { background: var(--magpie-bg, Canvas); -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .shell-tab:hover { background: var(--magpie-card, ButtonFace); }
+  html[data-magpie-glass] body { background: var(--magpie-bg, Canvas); }
+  html[data-magpie-glass] .shell-tabs { background: var(--magpie-bg, Canvas); }
+  html[data-magpie-glass] .shell-tab { background: var(--magpie-card, ButtonFace); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+  html[data-magpie-glass] .shell-tab[aria-selected="true"] { background: var(--magpie-accent, Highlight); color: var(--canvas, Canvas); }
 }

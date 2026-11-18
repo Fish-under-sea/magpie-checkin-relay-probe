@@ -87,54 +87,61 @@ table { width: 100%; border-collapse: collapse; }
 .guide .tip { color: var(--magpie-muted, GrayText); font-size: 11.5px; margin: 6px 0 0; }
 
 /* ── 液态玻璃（Magpie 2.4.0+ 的插件页钩子）───────────────────────────────
-   与签到页同一套：面的底色跟 content 区域的不透明度，模糊用同一组数字；
-   变量缺失或玻璃关着时回退实底。外层壳负责铺底色，这里的 body 透明。 */
+   与签到页同一套：面跟 content 区域的不透明度与模糊，输入/按钮跟 control；
+   边框一律半透明 + 内高光，不在玻璃上压深色实线（那就是「黑边」的来源）。 */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) and (background: color-mix(in srgb, red, transparent)) {
   /* html 与 body 一起透明：壳负责铺 content 区域的底，壁纸才透得进来。 */
   html[data-magpie-glass],
   html[data-magpie-glass] body { background: transparent; }
 
-  .card {
+  html[data-magpie-glass] .card {
     position: relative;
     background: color-mix(in srgb, var(--magpie-card, Canvas) var(--magpie-glass-content-fill, 100%), transparent);
     -webkit-backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
     backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
-    border-color: color-mix(in srgb, var(--magpie-line, ButtonBorder) 72%, transparent);
+    border-color: transparent;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--magpie-fg, CanvasText) 26%, transparent);
   }
-
   /* 高光边留着：fill=0 时底色全透，这一圈让面仍然是「玻璃」而不是洞。 */
-  .card::after {
+  html[data-magpie-glass] .card::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     padding: 1px;
     pointer-events: none;
-    background: linear-gradient(145deg, color-mix(in srgb, var(--magpie-fg, CanvasText) 16%, transparent), transparent 42%, transparent 62%, color-mix(in srgb, var(--magpie-fg, CanvasText) 9%, transparent));
+    background: linear-gradient(145deg, color-mix(in srgb, var(--magpie-fg, CanvasText) 26%, transparent), transparent 42%, transparent 62%, color-mix(in srgb, var(--magpie-fg, CanvasText) 14%, transparent));
     -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
     mask-composite: exclude;
-    opacity: .7;
+    opacity: .8;
   }
 
-  /* 输入与按钮留在自己的实底上，只借一层玻璃质感。 */
-  #relay input:not([type=checkbox]),
-  #relay select,
-  #relay button {
-    background: color-mix(in srgb, var(--magpie-card, Canvas) var(--magpie-glass-control-fill, 100%), transparent);
-    -webkit-backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.05);
-    backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.05);
+  /* 输入、下拉、按钮：control 玻璃；按钮与签到页一致做胶囊。 */
+  html[data-magpie-glass] #relay input:not([type=checkbox]),
+  html[data-magpie-glass] #relay select,
+  html[data-magpie-glass] #relay button {
+    background: color-mix(in srgb, var(--magpie-fg, CanvasText) calc(var(--magpie-glass-control-fill, 100%) * 0.1), transparent);
+    -webkit-backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.06);
+    backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.06);
+    border-color: color-mix(in srgb, var(--magpie-fg, CanvasText) 18%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--magpie-fg, CanvasText) 34%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--magpie-bg, Canvas) 45%, transparent);
   }
+  html[data-magpie-glass] #relay button { border-radius: 999px; }
+
+  /* 表格横线与卡片内分组线同样别显黑。 */
+  html[data-magpie-glass] #relay table th,
+  html[data-magpie-glass] #relay table td { border-color: color-mix(in srgb, var(--magpie-fg, CanvasText) 9%, transparent); }
 }
 
 /* 减少透明 / 高对比度：退回实底并关掉模糊，放在玻璃规则之后确保覆盖。 */
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
   html[data-magpie-glass],
   html[data-magpie-glass] body { background: var(--magpie-bg, Canvas); }
-  .card,
-  #relay input:not([type=checkbox]),
-  #relay select,
-  #relay button { background: var(--magpie-card, Canvas); -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .card::after { content: none; }
+  html[data-magpie-glass] .card,
+  html[data-magpie-glass] #relay input:not([type=checkbox]),
+  html[data-magpie-glass] #relay select,
+  html[data-magpie-glass] #relay button { background: var(--magpie-card, Canvas); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+  html[data-magpie-glass] .card::after { content: none; }
 }
