@@ -49,3 +49,68 @@ button.ghost { background: transparent; }
 .looktext small { display: block; color: var(--dim); font-size: 12px; margin-top: 1px; }
 /* 首次安装期间「正在准备 N 个供应商插件」用强调色，装完这行换回说明文字。 */
 .looktext small.pending { color: var(--accent); }
+
+/* ── 液态玻璃（Magpie 2.4.0+ 的插件页钩子）───────────────────────────────
+   Magpie 把「设置 › 外观」的四个区域下发成 --magpie-glass-<region>-fill/-blur，
+   并在真正透的时候给 <html> 挂 data-magpie-glass。这里只把「面」的底色与模糊
+   换到这组变量上：用户拖数字时页面跟着变，回退值保证旧宿主与玻璃关着时还是
+   实底。不写死 blur，不新增布局盒子，文字与控件仍在自己的底上。
+   参考 docs/developers/liquid-glass-hooks.md 与 Clash 的同款写法。 */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) and (background: color-mix(in srgb, red, transparent)) {
+  /* 子帧的底交给外层壳：壳按 content 区域铺底色，这里透明才不会叠出两层。
+     html 也要透明——宿主注入的 :where(html) 底会把壁纸挡住。 */
+  html[data-magpie-glass],
+  html[data-magpie-glass] body { background: transparent; }
+
+  .vendor,
+  .look {
+    position: relative;
+    background: color-mix(in srgb, var(--card) var(--magpie-glass-content-fill, 100%), transparent);
+    -webkit-backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
+    backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
+    border-color: color-mix(in srgb, var(--line) 72%, transparent);
+  }
+
+  /* 1px 渐变高光边：fill=0 时底色全透，这一圈还在，才不是「一个洞」。 */
+  .vendor::after,
+  .look::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--fg) 16%, transparent), transparent 42%, transparent 62%, color-mix(in srgb, var(--fg) 9%, transparent));
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    mask-composite: exclude;
+    opacity: .7;
+  }
+
+  /* 控件（按钮、分段开关）留在自己的实底上：玻璃化不把可读性一起透掉。 */
+  button,
+  .seg {
+    background: color-mix(in srgb, var(--card) var(--magpie-glass-control-fill, 100%), transparent);
+    -webkit-backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.05);
+    backdrop-filter: blur(var(--magpie-glass-control-blur, 0px)) saturate(180%) brightness(1.05);
+  }
+  .seg button { background: transparent; }
+  .seg button.sel { background: var(--accent); }
+  button.ghost { background: transparent; }
+}
+
+/* 减少透明 / 高对比度：退回实底并关掉模糊，放在玻璃规则之后确保覆盖。 */
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  html[data-magpie-glass],
+  html[data-magpie-glass] body { background: var(--bg); }
+  .vendor,
+  .look,
+  button,
+  .seg { background: var(--card); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .vendor::after,
+  .look::after { content: none; }
+  button.ghost { background: transparent; }
+  .seg button { background: transparent; }
+  .seg button.sel { background: var(--accent); }
+}

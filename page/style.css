@@ -70,3 +70,31 @@ body {
 .shell-pane[hidden] {
   display: none;
 }
+
+/* ── 液态玻璃（Magpie 2.4.0+ 的插件页钩子）───────────────────────────────
+   壳是唯一「贴着宿主窗口」的一层：内容区底色与标签栏都按 content 区域的不透明度
+   铺，子帧自己不再铺底（见 checkin/relay 的 style.css）。变量缺失或玻璃关着时
+   body 仍是实底，与旧版一致。 */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) and (background: color-mix(in srgb, red, transparent)) {
+  /* html 让位给宿主壁纸，body 才是 content 区域的玻璃底。 */
+  html[data-magpie-glass] { background: transparent; }
+  html[data-magpie-glass] body {
+    background: color-mix(in srgb, var(--magpie-bg, Canvas) var(--magpie-glass-content-fill, 100%), transparent);
+  }
+  .shell-tabs {
+    background: color-mix(in srgb, var(--magpie-bg, Canvas) var(--magpie-glass-content-fill, 100%), transparent);
+    -webkit-backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
+    backdrop-filter: blur(var(--magpie-glass-content-blur, 0px)) saturate(180%) brightness(1.06);
+  }
+  .shell-tab:hover {
+    background: color-mix(in srgb, var(--magpie-card, ButtonFace) var(--magpie-glass-control-fill, 100%), transparent);
+  }
+}
+
+/* 减少透明 / 高对比度：退回实底并关掉模糊。 */
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  html[data-magpie-glass],
+  html[data-magpie-glass] body,
+  .shell-tabs { background: var(--magpie-bg, Canvas); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .shell-tab:hover { background: var(--magpie-card, ButtonFace); }
+}

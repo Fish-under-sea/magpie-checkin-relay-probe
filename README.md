@@ -17,6 +17,18 @@ magpie 的一个页面插件，**页内两页切换**：左边「签到」，右
 页面本身连不到网络（宿主给页面帧的 CSP 是 `connect-src 'none'`），一切动作都经
 `magpie.call` 交给 magpie 本体执行。
 
+## 液态玻璃
+
+两个页面与切换壳都接了 Magpie 2.4.0 起的插件页钩子（`docs/developers/liquid-glass-hooks.md`）：
+
+- 底色跟 `--magpie-glass-<region>-fill`、模糊跟 `--magpie-glass-<region>-blur`，`html[data-magpie-glass]`
+  表示宿主真的开着玻璃；变量与属性由各自的 `_magpie/bridge.js` 写入，子帧那份经壳的转发拿到，
+  转发逻辑不需要改。
+- 卡片（`.vendor` / `.look` / `.card`）用 **content** 区域，按钮与开关用 **control** 区域；
+  壳的页面底与标签栏也用 content，子帧的 `html`/`body` 透明，只留一层底，不叠成双层。
+- `fill=0` 时保留 1px 渐变高光边；玻璃关着、旧宿主没有这些变量、`backdrop-filter` 不可用、
+  `prefers-reduced-transparency` 或 `forced-colors` 时，全部回退成原来的实底。
+
 ## 结构与「为什么是帧」
 
 ```
