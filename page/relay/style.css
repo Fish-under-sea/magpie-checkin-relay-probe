@@ -2,7 +2,7 @@
    颜色一律用 magpie 的 --magpie-* 变量，明暗主题自动跟随。 */
 
 /* 长串一律断行：Base URL、模型名、结论里的站点名都可能是一长串，不许把页面撑宽。 */
-body { margin: 0; padding: 18px 20px 28px; }
+body { margin: 0; padding: 18px 20px 28px; color: var(--magpie-fg, CanvasText); font-family: var(--magpie-font, system-ui, "Segoe UI", "Microsoft YaHei", sans-serif); }
 #relay { max-width: none; overflow-wrap: anywhere; }
 #relay > .card { margin-bottom: 10px; }
 #relay header { margin: 0 0 10px; }

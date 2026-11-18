@@ -1,7 +1,28 @@
-:root { color-scheme: light dark; --fg: #1b1d22; --dim: #6b7280; --line: #e5e7eb; --bg: #ffffff; --card: #fafafa; --accent: #2f7dd1; --bad: #c0392b; }
-@media (prefers-color-scheme: dark) { :root { --fg: #e6e8ee; --dim: #98a0ad; --line: #2b2f37; --bg: #14161a; --card: #1a1d22; --accent: #6ea8e8; --bad: #e07b6c; } }
+/* 颜色全部先取 Magpie 的主题 token（官方 hook），没有 token 时才用本页自己的
+   深浅回退：这样宿主换主题/强调色/字体，页面跟着走，独立打开也不至于失色。 */
+:root {
+  color-scheme: light dark;
+  --fg: var(--magpie-fg, #1b1d22);
+  --dim: var(--magpie-muted, #6b7280);
+  --line: var(--magpie-line, #e5e7eb);
+  --bg: var(--magpie-bg, #ffffff);
+  --card: var(--magpie-card, #fafafa);
+  --accent: var(--magpie-accent, #2f7dd1);
+  --bad: var(--magpie-red, #c0392b);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: var(--magpie-fg, #e6e8ee);
+    --dim: var(--magpie-muted, #98a0ad);
+    --line: var(--magpie-line, #2b2f37);
+    --bg: var(--magpie-bg, #14161a);
+    --card: var(--magpie-card, #1a1d22);
+    --accent: var(--magpie-accent, #6ea8e8);
+    --bad: var(--magpie-red, #e07b6c);
+  }
+}
 * { box-sizing: border-box; }
-body { margin: 0; padding: 18px 20px 28px; background: var(--bg); color: var(--fg); font: 13px/1.5 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif; }
+body { margin: 0; padding: 18px 20px 28px; background: var(--bg); color: var(--fg); font: 13px/1.5 var(--magpie-font, system-ui, "Segoe UI", "Microsoft YaHei", sans-serif); }
 header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
 h1 { font-size: 18px; margin: 0; }
 .total { margin: 2px 0 0; color: var(--dim); font-size: 12px; }
