@@ -1,6 +1,6 @@
 {
   "name": "@fish-under-sea/magpie-checkin-relay-probe",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Magpie 的一个页面插件，页内两页切换：自动签到（厂商账号、今日积分、连签）与中转站探针（行为指纹复核）。两页的代码与图标原样保留，只多一层切换壳与桥转发。",
   "type": "module",
   "license": "MIT",
